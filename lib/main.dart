@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:chewie/chewie.dart';
+import 'package:video_player/video_player.dart';
+
 import 'dart:ui' as ui;
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 void main() {
   runApp(MyApp());
 }
-
+///
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -27,15 +29,42 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  YoutubePlayerController _controller = YoutubePlayerController();
 
-  String _videoId = "WCobjTfojw0";
+     VideoPlayerController _videoPlayerController1;
+    ChewieController _chewieController;
 
-  @override
-  void deactivate() {
-    // This pauses video while navigating to next page.
-    _controller.pause();
-    super.deactivate();
+    @override
+    void initState() { 
+      super.initState();
+      _videoPlayerController1 = VideoPlayerController.network(
+        'https://r3---sn-4g5e6nsd.googlevideo.com/videoplayback?expire=1562545619&ei=czkiXabdEo2l-gar3J44&ip=94.121.168.0&id=o-ALZa5qePqSVYSuFwnyMn_GxjF3X67_OqNuO5nO2Pobxi&itag=18&source=youtube&requiressl=yes&mm=31%2C26&mn=sn-4g5e6nsd%2Csn-nv47lns7&ms=au%2Conr&mv=m&mvi=2&pl=20&gcr=tr&initcwndbps=405000&mime=video%2Fmp4&gir=yes&clen=19632636&ratebypass=yes&dur=252.215&lmt=1540073319413428&mt=1562523938&fvip=3&c=WEB&txp=5531432&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cgcr%2Cmime%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&lsparams=mm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AHylml4wRQIgPgJluIkMMgB6kbBU4-JOrWFnXNjwhwbVvg6fztqU6OkCIQDGo0p5EkVhhCsbMUjihMoB9l8a02TwOl-G47Ge4J38bA%3D%3D&sig=ALgxI2wwRQIgC9XfivFYtQ5zeD055VelpnwE1RJhtpwcQmwNysWcpxsCIQCUIZ4Lbe8-Rt8xZ3xKML6kMnIYGh-ocrMKAfr9GitlGA==');
+
+       _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController1,
+      aspectRatio: 3 / 2,
+      autoPlay: true,
+      looping: true,
+      // Try playing around with some of these other options:
+
+      // showControls: false,
+      // materialProgressColors: ChewieProgressColors(
+      //   playedColor: Colors.red,
+      //   handleColor: Colors.blue,
+      //   backgroundColor: Colors.grey,
+      //   bufferedColor: Colors.lightGreen,
+      // ),
+      // placeholder: Container(
+      //   color: Colors.grey,
+      // ),
+      // autoInitialize: true,
+    );
+
+    }
+@override
+  void dispose() {
+    _videoPlayerController1.dispose();
+    _chewieController.dispose();
+    super.dispose();
   }
 
   Widget videoPlayer() {
@@ -47,48 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
 
       /// Spacing the player from top
-      child: YoutubePlayer(
-        context: context,
-        videoId: _videoId,
-        flags: YoutubePlayerFlags(
-          mute: false,
-          autoPlay: true,
-          forceHideAnnotation: true,
-          showVideoProgressIndicator: true,
-          disableDragSeek: false,
-        ),
-        videoProgressIndicatorColor: Color(0xFFFF0000),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 20.0,
-            ),
-            onPressed: () {},
-          ),
-          Text(
-            'Hello! This is a test title.',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-            ),
-          ),
-          Spacer(),
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.white,
-              size: 25.0,
-            ),
-            onPressed: () {},
-          ),
-        ],
-        progressColors: ProgressColors(
-          playedColor: Color(0xFFFF0000),
-          handleColor: Color(0xFFFF4433),
-        ),
-      ),
+      child: new  Chewie(
+                  controller: _chewieController,
+                ), 
     );
   }
 
@@ -120,9 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
    
 
-    return YoutubeScaffold(
-      fullScreenOnOrientationChange: true,
-      child: Scaffold(
+    return  Scaffold(
         body: Column(
           children: <Widget>[
             Stack(
@@ -161,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),           
           ],
         ),
-      ),
+      
     );
   }
 }
